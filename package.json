@@ -1,6 +1,18 @@
 {
+  "name": "milwaukeetrack",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "generate": "prisma generate",
+    "db:push": "prisma db push",
+    "build": "prisma generate",
+    "dev": "echo 'Add your app entrypoint here (e.g. hono or next dev)'"
+  },
   "devDependencies": {
     "dotenv": "^17.4.2",
     "prisma": "^7.8.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.8.0"
   }
 }
