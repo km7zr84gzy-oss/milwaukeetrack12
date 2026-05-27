@@ -10,6 +10,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env.DATABASE_URL,
+    // Non-null assertion is safe: .env (local) + Amplify environment variables always provide DATABASE_URL at build time.
+    url: process.env.DATABASE_URL!,
   },
 });

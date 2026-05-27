@@ -1,0 +1,46 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - echo "Installing dependencies..."
+        - npm ci --legacy-peer-deps || npm ci
+    build:
+      commands:
+        - echo "Generating Prisma Client..."
+        - npx prisma generate
+        - echo "Building Next.js application..."
+        - npm run build
+  artifacts:
+    baseDirectory: .next
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+      - .next/cache/**/*
+
+# =============================================================================
+# AMPLIFY DEPLOYMENT NOTES
+# =============================================================================
+# 1. In Amplify Console: App Settings > Environment variables, ADD THESE:
+#    - DATABASE_URL (your Aurora Postgres connection string with sslmode=require)
+#    - NEXTAUTH_SECRET (strong random string, min 32 chars)
+#    - NEXTAUTH_URL (https://your-amplify-domain.com)
+#    - SES_ACCESS_KEY_ID
+#    - SES_SECRET_ACCESS_KEY
+#    - SES_REGION (us-east-2)
+#    - SES_FROM_EMAIL
+#    - SES_FROM_NAME
+#
+# 2. Prisma 7 requires modern Node. This config + .nvmrc pins Node 22.
+#    Amplify will auto-detect .nvmrc or you can set in build settings.
+#
+# 3. Build script already runs "prisma generate && next build" (see package.json).
+#
+# 4. If build fails on Prisma engine download, add to preBuild:
+#    - npm install @prisma/engines
+#
+# 5. After first successful deploy, run any seed/migration via Amplify SSH or
+#    locally with the same DATABASE_URL.
+# =============================================================================

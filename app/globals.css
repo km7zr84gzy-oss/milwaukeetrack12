@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  --card: #111111;
+  --primary: #0066ff;
+  --primary-hover: #0052cc;
+  --success: #22c55e;
+  --warning: #eab308;
+  --danger: #ef4444;
+  --border: #222222;
+}
+
+body {
+  font-family: var(--font-geist-sans), system-ui, -apple-system, sans-serif;
+}
+
+/* MilwaukeeTrack custom styles */
+.tracking-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tracking-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px rgba(0, 102, 255, 0.2);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 10px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.status-pending { background: #27272a; color: #a1a1aa; }
+.status-in_transit { background: #1e3a8a; color: #93c5fd; }
+.status-delivered { background: #14532d; color: #86efac; }
+.status-delayed { background: #451a03; color: #fed7aa; }
+
+.input {
+  background: #111;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  width: 100%;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #222;
+  color: #ddd;
+  border: 1px solid #444;
+}
+
+.btn-secondary:hover {
+  background: #333;
+}
+
+.header {
+  border-bottom: 1px solid var(--border);
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(12px);
+}
