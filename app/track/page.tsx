@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Search, Package, Clock, MapPin, Truck } from 'lucide-react';
+import React, { useState, Suspense } from 'react';
+import { Search, Package, Clock, MapPin, Truck, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'sonner';
+import { useSearchParams } from 'next/navigation';
 
 interface TrackingResult {
   trackingNumber: string;
@@ -19,14 +20,17 @@ interface TrackingResult {
   }>;
 }
 
-export default function Home() {
-  const [trackingNumber, setTrackingNumber] = useState('');
+function TrackContent() {
+  const searchParams = useSearchParams();
+  const initialNumber = searchParams.get('number') || '';
+
+  const [trackingNumber, setTrackingNumber] = useState(initialNumber);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<TrackingResult | null>(null);
   const [error, setError] = useState('');
 
-  const handleTrack = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleTrack = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!trackingNumber.trim()) return;
 
     setLoading(true);
@@ -51,48 +55,51 @@ export default function Home() {
     }
   };
 
+  // Auto-track if number was passed in query (e.g. from dashboard "View Public")
+  React.useEffect(() => {
+    if (initialNumber && !result && !loading) {
+      setTrackingNumber(initialNumber);
+      // Small delay so state settles
+      setTimeout(() => handleTrack(), 50);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialNumber]);
+
   return (
-    <div>
-      {/* Hero */}
-      <div className="max-w-4xl mx-auto px-6 pt-16 pb-12 text-center">
-        <div className="inline-flex items-center gap-2 px-4 py-1 rounded-full bg-[#111] border border-[#222] text-sm mb-6">
-          <div className="w-2 h-2 bg-[#22c55e] rounded-full animate-pulse" />
-          Powered by Aurora PostgreSQL
-        </div>
-
-        <h1 className="text-6xl font-semibold tracking-tighter mb-4">
-          Track every shipment.<br />In real time.
-        </h1>
-        <p className="text-xl text-[#888] max-w-md mx-auto mb-10">
-          Professional logistics visibility for Milwaukee and beyond.
-        </p>
-
-        {/* Tracking Form */}
-        <form onSubmit={handleTrack} className="max-w-xl mx-auto">
-          <div className="flex gap-3">
-            <input
-              type="text"
-              value={trackingNumber}
-              onChange={(e) => setTrackingNumber(e.target.value.toUpperCase())}
-              placeholder="Enter tracking number (e.g. 1Z9999999999999999)"
-              className="input flex-1 text-lg"
-              disabled={loading}
-            />
-            <button 
-              type="submit" 
-              disabled={loading || !trackingNumber.trim()}
-              className="btn btn-primary px-8 text-lg disabled:opacity-60"
-            >
-              {loading ? 'Searching...' : <><Search className="w-5 h-5" /> Track</>}
-            </button>
-          </div>
-          <p className="text-xs text-[#555] mt-3">Public tracking • No sign-in required</p>
-        </form>
+    <div className="max-w-4xl mx-auto px-6 py-12">
+      <div className="flex items-center gap-4 mb-8">
+        <Link href="/" className="flex items-center gap-2 text-sm text-[#888] hover:text-[#ddd]">
+          <ArrowLeft className="w-4 h-4" /> Back to home
+        </Link>
       </div>
 
-      {/* Results */}
+      <div className="text-center mb-10">
+        <h1 className="text-5xl font-semibold tracking-tighter mb-3">Track a Shipment</h1>
+        <p className="text-[#888]">Enter the tracking number below for real-time status and history.</p>
+      </div>
+
+      <form onSubmit={handleTrack} className="max-w-xl mx-auto mb-12">
+        <div className="flex gap-3">
+          <input
+            type="text"
+            value={trackingNumber}
+            onChange={(e) => setTrackingNumber(e.target.value.toUpperCase())}
+            placeholder="Enter tracking number (e.g. 1Z9999999999999999)"
+            className="input flex-1 text-lg"
+            disabled={loading}
+          />
+          <button 
+            type="submit" 
+            disabled={loading || !trackingNumber.trim()}
+            className="btn btn-primary px-8 text-lg disabled:opacity-60"
+          >
+            {loading ? 'Searching...' : <><Search className="w-5 h-5" /> Track</>}
+          </button>
+        </div>
+      </form>
+
       {error && (
-        <div className="max-w-xl mx-auto px-6 mb-12">
+        <div className="max-w-xl mx-auto mb-12">
           <div className="bg-[#1a0a0a] border border-[#3a1a1a] rounded-xl p-6 text-center">
             <p className="text-[#ef4444]">{error}</p>
             <p className="text-sm text-[#666] mt-2">Double-check the tracking number or contact support.</p>
@@ -101,7 +108,7 @@ export default function Home() {
       )}
 
       {result && (
-        <div className="max-w-3xl mx-auto px-6 mb-16">
+        <div className="max-w-3xl mx-auto">
           <div className="tracking-card bg-[#111] border border-[#222] rounded-2xl p-8">
             <div className="flex items-start justify-between mb-6">
               <div>
@@ -172,30 +179,14 @@ export default function Home() {
           </div>
         </div>
       )}
-
-      {/* Features / CTA */}
-      <div className="max-w-5xl mx-auto px-6 pb-20">
-        <div className="grid md:grid-cols-3 gap-6">
-          <div className="bg-[#111] border border-[#222] rounded-2xl p-8">
-            <h3 className="font-semibold mb-2">Real-time Updates</h3>
-            <p className="text-[#888] text-sm">Live status changes pushed directly from carrier APIs and our warehouse systems.</p>
-          </div>
-          <div className="bg-[#111] border border-[#222] rounded-2xl p-8">
-            <h3 className="font-semibold mb-2">Team Access</h3>
-            <p className="text-[#888] text-sm">Secure logins for your entire logistics team. Role-based permissions coming soon.</p>
-            <Link href="/register" className="inline-block mt-4 text-sm text-[#0066ff]">Create an account →</Link>
-          </div>
-          <div className="bg-[#111] border border-[#222] rounded-2xl p-8">
-            <h3 className="font-semibold mb-2">Email Notifications</h3>
-            <p className="text-[#888] text-sm">Automatic alerts via Amazon SES when shipments move or experience delays.</p>
-          </div>
-        </div>
-
-        <div className="text-center mt-16">
-          <Link href="/track" className="btn btn-primary mr-4">Track a Shipment</Link>
-          <Link href="/login" className="btn btn-secondary">Access your dashboard</Link>
-        </div>
-      </div>
     </div>
+  );
+}
+
+export default function TrackPage() {
+  return (
+    <Suspense fallback={<div className="p-12 text-center text-[#666]">Loading tracking...</div>}>
+      <TrackContent />
+    </Suspense>
   );
 }

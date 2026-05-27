@@ -123,7 +123,7 @@ export default function Dashboard() {
                     </div>
                   )}
                 </div>
-                <Link href={`/api/track?number=${s.trackingNumber}`} className="btn btn-secondary text-sm px-4 py-2">View Public</Link>
+                <Link href={`/track?number=${encodeURIComponent(s.trackingNumber)}`} className="btn btn-secondary text-sm px-4 py-2">View Public</Link>
               </div>
             </div>
           ))}

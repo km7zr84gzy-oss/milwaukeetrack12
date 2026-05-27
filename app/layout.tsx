@@ -43,7 +43,8 @@ export default async function RootLayout({
             </Link>
 
             <nav className="flex items-center gap-6 text-sm">
-              <Link href="/" className="hover:text-[#0066ff] transition">Track</Link>
+              <Link href="/track" className="hover:text-[#0066ff] transition">Track</Link>
+              <Link href="/ship" className="hover:text-[#0066ff] transition">Ship</Link>
               <Link href="/dashboard" className="hover:text-[#0066ff] transition">Dashboard</Link>
               
               {session ? (
